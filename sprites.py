@@ -1,7 +1,8 @@
 import pygame
-from pygame.sprite import Sprite, DirtySprite, Group
+from pygame.sprite import Sprite, Group
 from pygame.rect import Rect
 from pygame.surface import Surface
+from typing import Dict
 
 # from https://opengameart.org/content/asteroids-vector-style-sprites
 filename = "asteroids-2x.png"
@@ -33,8 +34,10 @@ if __name__ == "__main__":
     size = (WIDTH, HEIGHT)
     window = pygame.display.set_mode(size)
 
+
 # inspired by https://ehmatthes.github.io/pcc_2e/beyond_pcc/pygame_sprite_sheets/
 class SpriteSheet:
+
     def __init__(self):
         try:
             self.sheet = pygame.image.load(filename).convert_alpha()
@@ -50,7 +53,7 @@ class SpriteSheet:
         image.blit(self.sheet, (0, 0), rect)
         return image
 
-    def getSpriteRects(self) -> dict[str, Rect]:
+    def getSpriteRects(self) -> Dict[str, Rect]:
         if self.rectDict is None:
             spriteRects = {
                 "bigAsteroid1": bigAsteroid1,
@@ -95,9 +98,8 @@ class SpriteSheet:
             # make a temporary sprite for fun happy test rendering
             # for actual game use, a subclass would be better
             tempSprite = Sprite()
-            tempSprite.rect = Rect(
-                testingCurrentX, testingCurrentY, tempImgRect.width, tempImgRect.height
-            )
+            tempSprite.rect = Rect(testingCurrentX, testingCurrentY,
+                                   tempImgRect.width, tempImgRect.height)
             tempSprite.image = self.image_at(tempImgRect)
 
             tempSprite.mask = pygame.mask.from_surface(tempSprite.image, 240)
@@ -105,14 +107,14 @@ class SpriteSheet:
 
             # check if this sprite is bigger than any we've seen so far, if so remember that
             largestSpriteHeight = max(
-                tempSprite.image.get_bounding_rect().height, largestSpriteHeight
-            )
+                tempSprite.image.get_bounding_rect().height,
+                largestSpriteHeight)
             tempGroup.add(tempSprite)
 
             #draw image surface size
-            my_image_rect = tempSprite.image.get_rect(center=tempSprite.rect.center)
+            my_image_rect = tempSprite.image.get_rect(
+                center=tempSprite.rect.center)
             pygame.draw.rect(window, (0, 255, 0), my_image_rect, 3)
-
 
             #draw bounding box of image size
             bounding_rect = tempSprite.image.get_bounding_rect()
@@ -120,9 +122,9 @@ class SpriteSheet:
             pygame.draw.rect(window, (255, 0, 0), bounding_rect, 3)
 
             #draw collision mask of image
-            maskCopy = tempSprite.mask.to_surface(
-                surface=tempSprite.image, setcolor=(0, 0, 255, 255), unsetcolor=None
-            ).copy()
+            maskCopy = tempSprite.mask.to_surface(surface=tempSprite.image,
+                                                  setcolor=(0, 0, 255, 255),
+                                                  unsetcolor=None).copy()
             window.blit(maskCopy, tempSprite.rect.topleft)
 
             #move the X for the next image
